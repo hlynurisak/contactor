@@ -24,16 +24,11 @@ const ContactsList = ({ search, contacts }) => {
 
   const renderContact = ({ item }) => (
     <View style={styles.contactContainer}>
-      {item.thumbnail ? (
-        <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-      ) : (
-        <View style={styles.initialsPlaceholder}>
-          <Text style={styles.initialsText}>{getInitials(item.name)}</Text>
-        </View>
-      )}
-      <Text style={styles.name}>{item.name}</Text>
-      {item.phoneNumber && <Text style={styles.phoneNumber}>{item.phoneNumber}</Text>}
-    </View>
+      <View style={styles.initialsCircle}>
+        <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
+      </View>
+      <Text style={styles.contactName}>{item.name}</Text>
+  </View>
   );
 
   return (

@@ -2,35 +2,33 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   listContainer: {
-    padding: 10,
+    paddingHorizontal: 10,
   },
   contactContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  thumbnail: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  initialsPlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#ccc', // Placeholder background color
-    alignItems: 'center',
+  initialsCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#007AFF',
     justifyContent: 'center',
-    marginRight: 10,
+    alignItems: 'center',
+    marginRight: 15,
   },
   initialsText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  name: {
+  contactName: {
     fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
   },
 });
 
