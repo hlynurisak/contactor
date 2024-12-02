@@ -1,46 +1,85 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import ContactsList from './src/components/ContactsList'; 
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
+import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [contacts, setContacts] = useState([]); // State to hold all contacts
+
+  // Load saved contacts from the file system on mount
+  useEffect(() => {
+    const loadSavedContacts = async () => {
+      try {
+        const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+        const jsonFiles = files.filter((file) => file.endsWith('.json'));
+        const loadedContacts = [];
+
+        for (const file of jsonFiles) {
+          const fileContent = await FileSystem.readAsStringAsync(
+            `${FileSystem.documentDirectory}${file}`
+          );
+          const contact = JSON.parse(fileContent);
+          loadedContacts.push({
+            id: file, // Use the filename as the unique ID
+            name: contact.contactName,
+            phoneNumber: contact.phoneNumber,
+            photo: contact.photo,
+          });
+        }
+
+        setContacts(loadedContacts);
+      } catch (error) {
+        console.error('Error loading contacts:', error);
+      }
+    };
+
+    loadSavedContacts();
+  }, []);
+
+  const handleAddContact = (newContact) => {
+    setContacts((prevContacts) => [
+      ...prevContacts,
+      {
+        id: `${newContact.contactName}-${Date.now()}`, // Generate a unique ID for UI purposes
+        name: newContact.contactName,
+        phoneNumber: newContact.phoneNumber,
+        photo: newContact.photo,
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
-        <View style={styles.header}>
-          {/* Search bar */}
-          <SearchBar 
-            search={search} 
-            setSearch={setSearch} 
-            style={styles.searchBar}
-          />
+      <View style={styles.header}>
+        {/* Search bar */}
+        <SearchBar 
+          search={search} 
+          setSearch={setSearch} 
+          style={styles.searchBar}
+        />
 
-          {/* Add contact button */}
-          <TouchableOpacity 
-            style={styles.addContact}
-            onPress={() => setModalVisible(true)}>
-            <Text style={styles.addContactText}>+</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Add contact button */}
+        <TouchableOpacity 
+          style={styles.addContact}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.addContactText}>+</Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* List of contacts */}
-        <ContactsList search={search} /> 
+      {/* List of contacts */}
+      <ContactsList search={search} contacts={contacts} /> 
 
-        {/* Modal for adding a new contact */}
+      {/* Modal for adding a new contact */}
       <NewContactModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)} // Close the modal
-        onSave={() => setModalVisible(false)} // Close after saving
-        contactName=""
-        setContactName={() => {}}
-        phoneNumber=""
-        setphoneNumber={() => {}}
-        photo=""
-        setPhoto={() => {}}
+        onSave={handleAddContact} // Update state after saving
       />
       <StatusBar style="auto" />
     </View>

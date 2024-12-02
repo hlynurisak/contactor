@@ -1,47 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, Alert } from 'react-native';
-import * as Contacts from 'expo-contacts';
+import { View, Text, FlatList, Image } from 'react-native';
 import styles from './styles';
 
-const ContactsList = ({ search }) => {
-  const [contacts, setContacts] = useState([]);
+const ContactsList = ({ search, contacts }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert('Permission Denied', 'Unable to access contacts.');
-          return;
-        }
-
-        const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.Name, Contacts.Fields.Image],
-        });
-
-        if (data.length > 0) {
-          const sortedContacts = data
-            .filter((contact) => contact.name)
-            .map((contact) => ({
-              id: contact.id,
-              name: contact.name,
-              initials: getInitials(contact.name),
-              thumbnail: contact.imageAvailable ? contact.image.uri : null,
-            }))
-            .sort((a, b) => a.name.localeCompare(b.name));
-
-          setContacts(sortedContacts);
-          setFilteredContacts(sortedContacts); // Initialize filtered list
-        }
-      } catch (error) {
-        console.error('Error fetching contacts:', error);
-        Alert.alert('Error', 'Unable to fetch contacts.');
-      }
-    };
-
-    fetchContacts();
-  }, []);
 
   useEffect(() => {
     if (search) {
@@ -66,10 +28,11 @@ const ContactsList = ({ search }) => {
         <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
       ) : (
         <View style={styles.initialsPlaceholder}>
-          <Text style={styles.initialsText}>{item.initials}</Text>
+          <Text style={styles.initialsText}>{getInitials(item.name)}</Text>
         </View>
       )}
       <Text style={styles.name}>{item.name}</Text>
+      {item.phoneNumber && <Text style={styles.phoneNumber}>{item.phoneNumber}</Text>}
     </View>
   );
 
