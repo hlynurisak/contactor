@@ -2,19 +2,17 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
     view: {
-        margin: 10,
-        backgroundColor: 'white',
-        borderColor: 'red',
-        borderWidth: 2,
-    },
-    sbInputContainerStyle: {
-        backgroundColor: 'white',
-        borderColor: 'blue',
-        borderWidth: 2,
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
     },
     sbContainerStyle: {
-        backgroundColor: 'white',
-        borderColor: 'green',
-        borderWidth: 2,
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+    },
+    sbInputContainerStyle: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
     },
 });
+
+export default styles;
