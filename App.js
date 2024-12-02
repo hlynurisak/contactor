@@ -11,13 +11,26 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <SearchBar search={search} setSearch={setSearch} />
-      <ContactsList search={search} /> 
-      <TouchableOpacity 
-      style={styles.addContact}
-      onPress={() => setModalVisible(true)}>
-        <Text>+</Text>
-      </TouchableOpacity>
+        <View style={styles.header}>
+          {/* Search bar */}
+          <SearchBar 
+            search={search} 
+            setSearch={setSearch} 
+            style={styles.searchBar}
+          />
+
+          {/* Add contact button */}
+          <TouchableOpacity 
+            style={styles.addContact}
+            onPress={() => setModalVisible(true)}>
+            <Text style={styles.addContactText}>+</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* List of contacts */}
+        <ContactsList search={search} /> 
+
+        {/* Modal for adding a new contact */}
       <NewContactModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)} // Close the modal
@@ -38,11 +51,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 50, // Adjust for status bar
+    paddingTop: 50,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1.5,
+    padding: 5,
+    paddingBottom: 10,
+    borderBottomColor: '#ccc',
+  },
+  searchBar: {
+    flex: 1,
   },
   addContact: {
-    margin: 5,
+    width: 40,
+    height: 40,
+    backgroundColor: '#007AFF',
+    borderRadius: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 20,
-  }
+    shadowColor: '#000',
+  },
+  addContactText: {
+    color: '#fff',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
 });

@@ -3,15 +3,19 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     view: {
         backgroundColor: 'transparent',
-        borderColor: 'transparent',
+        flex: 1, 
     },
     sbContainerStyle: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
+        backgroundColor: 'white',
+        borderWidth: 0,
+        shadowColor: 'white',
+        borderBottomColor: 'transparent',
+        borderTopColor: 'transparent'
     },
     sbInputContainerStyle: {
         backgroundColor: 'transparent',
-        borderColor: 'transparent',
+        height: 40, 
+        flex: 1, 
     },
 });
 
