@@ -6,12 +6,13 @@ import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
 
 export default function App() {
+  const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
-      <SearchBar />
-      <ContactsList /> 
+      <SearchBar search={search} setSearch={setSearch} />
+      <ContactsList search={search} /> 
       <TouchableOpacity 
       style={styles.addContact}
       onPress={() => setModalVisible(true)}>
