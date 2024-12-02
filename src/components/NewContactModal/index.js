@@ -1,19 +1,18 @@
 import React from 'react';
 import { View, Text, TextInput, Modal, Button, TouchableOpacity, Image } from 'react-native';
-import styles from '@/src/NewContactModal/styles';
+import styles from './styles';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function NewContactModal ({
     visible,
     onClose,
-    onSave,
-    contactName,
-    setName,
-    phoneNumber,
-    setphoneNumber,
-    photo,
-    setPhoto,
+    onSave
 }) {
+    const [contactName, setContactName] = React.useState('');
+    const [phoneNumber, setPhoneNumber] = React.useState('');
+    const [photo, setPhoto] = React.useState('');
+
+
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -28,10 +27,28 @@ export default function NewContactModal ({
             aspect: [4, 3],
             quality: 1,
         });
+        console.log(result); // Check what `result` contains
+
     
         if (!result.canceled) {
-            setBoardPhoto(result.assets[0].uri);
+            setPhoto(result.assets[0].uri);
         }
+    };
+
+    const handleSave = () => {
+        if (!contactName && !phoneNumber) {
+            alert('Name and Phone number are required');
+            return;
+        }
+        else if (!contactName) {
+            alert('Name is required');
+            return;
+        }
+        else if (!phoneNumber) {
+            alert('Phone number is required');
+            return;
+        }
+        onSave({ contactName, phoneNumber, photo }); // Pass data to the parent
     };
 
     return(
@@ -53,18 +70,18 @@ export default function NewContactModal ({
                         style={styles.input}
                         placeholder="Name"
                         value={contactName}
-                        onChangeText={setBoardName}
+                        onChangeText={setContactName}
                     />
                     <TextInput 
                         style={styles.input}
                         placeholder="Phone Number"
                         value={phoneNumber}
-                        onChangeText={setphoneNumber}
+                        onChangeText={setPhoneNumber}
                     />
                     <TextInput 
                         style={styles.input}
                         placeholder="Photo URL (optional)"
-                        value={photo}
+                        value={photo || ''}
                         onChangeText={setPhoto}
                     />
                     <TouchableOpacity
@@ -73,15 +90,7 @@ export default function NewContactModal ({
                     >
                         <Text style={styles.imagePickerButtonText}>Pick an Image</Text>
                     </TouchableOpacity>
-                    {/* Display selected image or a placeholder message */}
-                    {boardPhoto ? (
-                        <Image source={{ uri: boardPhoto }} style={styles.imagePreview} />
-                    ) : (
-                        <Text style={styles.noImageText}>
-                        No Image Selected or URL Entered
-                        </Text>
-                    )}
-                    <Button title="Add New Contact" onPress={onSave}/>
+                    <Button title="Save" onPress={handleSave}/>
                 </View>
             </View>
         </Modal>
