@@ -78,12 +78,6 @@ export default function NewContactModal ({
                         value={phoneNumber}
                         onChangeText={setPhoneNumber}
                     />
-                    <TextInput 
-                        style={styles.input}
-                        placeholder="Photo URL (optional)"
-                        value={photo || ''}
-                        onChangeText={setPhoto}
-                    />
                     <TouchableOpacity
                         style={styles.imagePickerButton}
                         onPress={pickImage}
