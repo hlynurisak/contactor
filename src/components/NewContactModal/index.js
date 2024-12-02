@@ -40,7 +40,6 @@ export default function NewContactModal({ visible, onClose, onSave }) {
       const fileContent = JSON.stringify(contact);
 
       await FileSystem.writeAsStringAsync(fileUri, fileContent);
-      Alert.alert('File content: ' + JSON.parse(FileSystem.readAsStringAsync(fileUri)));
     } catch (error) {
       console.error('Error saving contact:', error);
       Alert.alert('Error', 'Unable to save contact.');
