@@ -84,6 +84,9 @@ export default function NewContactModal ({
                     >
                         <Text style={styles.imagePickerButtonText}>Pick an Image</Text>
                     </TouchableOpacity>
+                    {photo ? (
+                        <Image source={{ uri: photo }} style={styles.imagePreview} />
+                    ) : ( null)}
                     <Button title="Save" onPress={handleSave}/>
                 </View>
             </View>
