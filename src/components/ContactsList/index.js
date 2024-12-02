@@ -1,39 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, Alert } from 'react-native';
 import * as Contacts from 'expo-contacts';
-import styles from './styles'; // Import the styles
+import styles from './styles';
 
-const ContactsList = () => {
+const ContactsList = ({ search }) => {
   const [contacts, setContacts] = useState([]);
+  const [filteredContacts, setFilteredContacts] = useState([]);
 
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        // Request permissions
         const { status } = await Contacts.requestPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert('Permission Denied', 'Unable to access contacts.');
           return;
         }
 
-        // Fetch contacts
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.Name, Contacts.Fields.Image],
         });
 
         if (data.length > 0) {
-          // Process and sort contacts alphabetically
           const sortedContacts = data
-            .filter((contact) => contact.name) // Filter out contacts without a name
+            .filter((contact) => contact.name)
             .map((contact) => ({
               id: contact.id,
               name: contact.name,
-              initials: getInitials(contact.name), // Generate initials
+              initials: getInitials(contact.name),
               thumbnail: contact.imageAvailable ? contact.image.uri : null,
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
 
           setContacts(sortedContacts);
+          setFilteredContacts(sortedContacts); // Initialize filtered list
         }
       } catch (error) {
         console.error('Error fetching contacts:', error);
@@ -44,13 +43,21 @@ const ContactsList = () => {
     fetchContacts();
   }, []);
 
-  // Function to extract initials from a name
+  useEffect(() => {
+    if (search) {
+      const filtered = contacts.filter((contact) =>
+        contact.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredContacts(filtered);
+    } else {
+      setFilteredContacts(contacts);
+    }
+  }, [search, contacts]);
+
   const getInitials = (name) => {
     const nameParts = name.split(' ');
-    const initials = nameParts
-      .map((part) => part[0]?.toUpperCase())
-      .join('');
-    return initials.slice(0, 2); // Limit to 2 initials
+    const initials = nameParts.map((part) => part[0]?.toUpperCase()).join('');
+    return initials.slice(0, 2);
   };
 
   const renderContact = ({ item }) => (
@@ -68,7 +75,7 @@ const ContactsList = () => {
 
   return (
     <FlatList
-      data={contacts}
+      data={filteredContacts}
       keyExtractor={(item) => item.id}
       renderItem={renderContact}
       contentContainerStyle={styles.listContainer}
