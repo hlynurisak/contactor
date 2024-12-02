@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
-import { SearchBar } from '@rneui/themed';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { SearchBar as RNSearchBar } from '@rneui/themed';
+import { View } from 'react-native';
+import styles from './styles';
 
-const SwitchComponent = () => {
-const [search, setSearch] = useState("");
-
-const updateSearch = (search) => {
-  setSearch(search);
+const SearchBar = ({ search, setSearch }) => {
+  return (
+    <View style={styles.view}>
+      <RNSearchBar
+        placeholder="Search Contacts..."
+        onChangeText={setSearch}
+        value={search}
+        inputContainerStyle={styles.sbInputContainerStyle}
+        containerStyle={styles.sbContainerStyle}
+      />
+    </View>
+  );
 };
 
-return (
-  <View style={styles.view}>
-    <SearchBar
-      placeholder="Type Here..."
-      onChangeText={updateSearch}
-      value={search}
-    />
-  </View>
-);
-};
-
-const styles = StyleSheet.create({
-view: {
-  margin: 10,
-},
-});
-
-export default SwitchComponent;
+export default SearchBar;
