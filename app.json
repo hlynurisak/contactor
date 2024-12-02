@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "contractor",
-    "slug": "contractor",
+    "name": "contactor",
+    "slug": "contactor",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
