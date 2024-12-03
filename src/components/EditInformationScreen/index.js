@@ -3,6 +3,7 @@ import { Modal, View, Image } from 'react-native';
 import styles from './styles';
 
 export default function EditInformationScreen({
+    contact,
     visible,
     onClose,
     onSave
