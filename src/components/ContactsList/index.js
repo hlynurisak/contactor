@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import styles from './styles';
 
 const ContactsList = ({ search, contacts }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
 
   useEffect(() => {
+    const sortedContacts = [...contacts].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+
     if (search) {
-      const filtered = contacts.filter((contact) =>
+      const filtered = sortedContacts.filter((contact) =>
         contact.name.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredContacts(filtered);
     } else {
-      setFilteredContacts(contacts);
+      setFilteredContacts(sortedContacts);
     }
   }, [search, contacts]);
-
-  const getInitials = (name) => {
-    const nameParts = name.split(' ');
-    const initials = nameParts.map((part) => part[0]?.toUpperCase()).join('');
-    return initials.slice(0, 2);
-  };
 
   const renderContact = ({ item }) => (
     <View style={styles.contactContainer}>
@@ -28,7 +26,7 @@ const ContactsList = ({ search, contacts }) => {
         <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
       </View>
       <Text style={styles.contactName}>{item.name}</Text>
-  </View>
+    </View>
   );
 
   return (
