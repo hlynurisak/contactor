@@ -67,6 +67,22 @@ export const saveNewContact = async (newContact) => {
   }
 };
 
+export const deleteContact = async (contactId) => {
+  try {
+    const contactFile = await getContactFileById(contactId);
+    if (!contactFile) {
+      console.error('Contact file not found');
+      return false;
+    }
+    const fileUri = `${FileSystem.documentDirectory}${contactFile}`;
+    await FileSystem.deleteAsync(fileUri);
+    return true;
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+    return false;
+  }
+};
+
 export const updateContact = async (updatedContact) => {
   try {
     const contactId = updatedContact.id;
@@ -74,15 +90,25 @@ export const updateContact = async (updatedContact) => {
       console.error('Contact ID not found');
       return false;
     }
-    const contactFile = await getContactFileById(contactId);
-    if (!contactFile) {
-      console.error('Contact file not found');
+
+    // Remove the ID from the updated contact
+    const { id, ...contactWithoutId } = updatedContact;
+    const contact = contactWithoutId;
+
+    // Delete the old contact
+    const deleteResult = await deleteContact(contactId);
+    if (!deleteResult) {
+      console.error('Failed to delete old contact');
       return false;
     }
-    const fileUri = `${FileSystem.documentDirectory}${contactFile}`;
-    const fileContent = JSON.stringify(updatedContact);
 
-    await FileSystem.writeAsStringAsync(fileUri, fileContent);
+    // Save the new contact
+    const saveResult = await saveNewContact(contact);
+    if (!saveResult) {
+      console.error('Failed to save updated contact');
+      return false;
+    }
+
     return true;
   } catch (error) {
     console.error('Error updating contact:', error);
