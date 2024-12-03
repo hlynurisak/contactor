@@ -27,7 +27,7 @@ export default function App() {
           );
           const contact = JSON.parse(fileContent);
           loadedContacts.push({
-            id: file, // Use the filename as the unique ID
+            id: file, 
             name: contact.contactName,
             phoneNumber: contact.phoneNumber,
             photo: contact.photo,
@@ -47,7 +47,7 @@ export default function App() {
     setContacts((prevContacts) => [
       ...prevContacts,
       {
-        id: `${newContact.contactName}-${Date.now()}`, // Generate a unique ID for UI purposes
+        id: `${newContact.contactName}-${Date.now()}`, 
         name: newContact.contactName,
         phoneNumber: newContact.phoneNumber,
         photo: newContact.photo,
@@ -56,8 +56,8 @@ export default function App() {
   };
 
   const handleContactSelect = (contact) => {
-    setSelectedContact(contact); // Set the selected contact
-    setInfoModalVisible(true); // Show the InformationScreen modal
+    setSelectedContact(contact); 
+    setInfoModalVisible(true); 
   };
 
   return (
@@ -79,21 +79,21 @@ export default function App() {
       <ContactsList
         search={search}
         contacts={contacts}
-        onContactSelect={handleContactSelect} // Pass the contact selection handler
+        onContactSelect={handleContactSelect} 
       />
 
       {/* Modal for adding a new contact */}
       <NewContactModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)} // Close the modal
-        onSave={handleAddContact} // Update state after saving
+        onClose={() => setModalVisible(false)} 
+        onSave={handleAddContact} 
       />
 
       {/* Modal for displaying detailed contact information */}
       <InformationScreen
         contact={selectedContact}
         visible={infoModalVisible}
-        onClose={() => setInfoModalVisible(false)} // Close the InformationScreen modal
+        onClose={() => setInfoModalVisible(false)} 
       />
     </View>
   );

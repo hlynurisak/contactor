@@ -34,7 +34,7 @@ export default function NewContactModal({ visible, onClose, onSave }) {
 
   const saveToFileSystem = async (contact) => {
     try {
-      const fileName = `${contact.contactName}-${generateUniqueId()}.json`; // Use custom unique ID
+      const fileName = `${contact.contactName}-${generateUniqueId()}.json`; 
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
       const fileContent = JSON.stringify(contact);
@@ -58,13 +58,13 @@ export default function NewContactModal({ visible, onClose, onSave }) {
       photo,
     };
 
-    // Save contact to the file system
+    
     saveToFileSystem(newContact);
 
-    // Pass the data to the parent component
+    
     onSave(newContact);
 
-    // Reset the form and close the modal
+    
     setContactName('');
     setPhoneNumber('');
     setPhoto('');

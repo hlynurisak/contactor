@@ -23,7 +23,7 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
   const renderContact = ({ item }) => (
     <TouchableOpacity
       style={styles.contactContainer}
-      onPress={() => onContactSelect(item)} // Trigger the callback when a contact is tapped
+      onPress={() => onContactSelect(item)} 
     >
       <View style={styles.initialsCircle}>
         <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
