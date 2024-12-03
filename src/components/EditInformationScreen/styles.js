@@ -18,6 +18,47 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
     },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    name: {
+        fontSize: 20,
+        fontWeight: '600',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    cancelButtonText: {
+        color: 'grey',
+        fontSize: 18,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 4,
+        padding: 8,
+        marginBottom: 10,
+        backgroundColor: '#fff',
+    },
+    imagePickerButton: {
+        backgroundColor: '#007AFF',
+        padding: 10,
+        borderRadius: 5,
+        marginVertical: 10,
+        alignItems: 'center',
+    },
+    imagePickerButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    imagePreview: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+        marginVertical: 10,
+    },
 });
 
 export default styles;

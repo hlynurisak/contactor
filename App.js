@@ -60,6 +60,14 @@ export default function App() {
     setInfoModalVisible(true); 
   };
 
+  const handleSaveContact = (updatedContact) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((contact) =>
+        contact.id === updatedContact.id ? updatedContact : contact
+      )
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -94,6 +102,7 @@ export default function App() {
         contact={selectedContact}
         visible={infoModalVisible}
         onClose={() => setInfoModalVisible(false)} 
+        setContacts={handleSaveContact} // Pass down the save handler
       />
     </View>
   );
