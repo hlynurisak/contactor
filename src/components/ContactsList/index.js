@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
+import * as Linking from 'expo-linking';
+import { Ionicons } from '@expo/vector-icons';
 
 const ContactsList = ({ search, contacts, onContactSelect }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -21,19 +23,29 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
   }, [search, contacts]);
 
   const renderContact = ({ item }) => (
-    <TouchableOpacity
-      style={styles.contactContainer}
-      onPress={() => onContactSelect(item)} 
-    >
-      <View style={styles.initialsCircle}>
-        {item.photo ? (
-          <Image source={{ uri: item.photo }} style={styles.image} />
-        ) : (
-          <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
-        )}
-      </View>
-      <Text style={styles.contactName}>{item.name}</Text>
-    </TouchableOpacity>
+    <View style={styles.contactContainer}>
+      <TouchableOpacity
+        style={styles.contact}
+        onPress={() => onContactSelect(item)} 
+      >
+        <View style={styles.thumbnail}>
+          {item.photo ? (
+            <Image source={{ uri: item.photo }} style={styles.image} />
+          ) : (
+            <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
+          )}
+        </View>
+        <Text style={styles.contactName}>{item.name}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => Linking.openURL(`tel:${item.phoneNumber}`)}
+      >
+        <View style={styles.phoneIcon}>
+          <Ionicons name="call" size={24} color="#fff" />
+
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
