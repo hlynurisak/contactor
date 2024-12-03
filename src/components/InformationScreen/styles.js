@@ -1,34 +1,69 @@
-import { StyleSheet } from "react-native-web";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    modalBackground: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    modalContainer: {
-        width: 500,
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-    },
-    name: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    phoneNumber: {
-        fontSize: 15,
-        color: 'blue',
-    },
-    image: {
-        position: 'absolute',
-    }
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: 300,
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+  },
+  placeholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  placeholderText: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  name: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  phoneNumber: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  noPhoneNumber: {
+    fontSize: 16,
+    color: '#aaa',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  closeButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
 
 export default styles;

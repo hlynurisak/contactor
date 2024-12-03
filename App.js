@@ -1,15 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import ContactsList from './src/components/ContactsList'; 
+import ContactsList from './src/components/ContactsList';
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
+import InformationScreen from './src/components/InformationScreen';
 import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [contacts, setContacts] = useState([]); // State to hold all contacts
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   // Load saved contacts from the file system on mount
   useEffect(() => {
@@ -53,18 +55,19 @@ export default function App() {
     ]);
   };
 
+  const handleContactSelect = (contact) => {
+    setSelectedContact(contact); // Set the selected contact
+    setInfoModalVisible(true); // Show the InformationScreen modal
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         {/* Search bar */}
-        <SearchBar 
-          search={search} 
-          setSearch={setSearch} 
-          style={styles.searchBar}
-        />
+        <SearchBar search={search} setSearch={setSearch} style={styles.searchBar} />
 
         {/* Add contact button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.addContact}
           onPress={() => setModalVisible(true)}
         >
@@ -73,7 +76,11 @@ export default function App() {
       </View>
 
       {/* List of contacts */}
-      <ContactsList search={search} contacts={contacts} /> 
+      <ContactsList
+        search={search}
+        contacts={contacts}
+        onContactSelect={handleContactSelect} // Pass the contact selection handler
+      />
 
       {/* Modal for adding a new contact */}
       <NewContactModal
@@ -81,7 +88,13 @@ export default function App() {
         onClose={() => setModalVisible(false)} // Close the modal
         onSave={handleAddContact} // Update state after saving
       />
-      <StatusBar style="auto" />
+
+      {/* Modal for displaying detailed contact information */}
+      <InformationScreen
+        contact={selectedContact}
+        visible={infoModalVisible}
+        onClose={() => setInfoModalVisible(false)} // Close the InformationScreen modal
+      />
     </View>
   );
 }

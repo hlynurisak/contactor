@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
-const ContactsList = ({ search, contacts }) => {
+const ContactsList = ({ search, contacts, onContactSelect }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
 
   useEffect(() => {
@@ -21,12 +21,15 @@ const ContactsList = ({ search, contacts }) => {
   }, [search, contacts]);
 
   const renderContact = ({ item }) => (
-    <View style={styles.contactContainer}>
+    <TouchableOpacity
+      style={styles.contactContainer}
+      onPress={() => onContactSelect(item)} // Trigger the callback when a contact is tapped
+    >
       <View style={styles.initialsCircle}>
         <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
       </View>
       <Text style={styles.contactName}>{item.name}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

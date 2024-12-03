@@ -1,30 +1,45 @@
 import React from 'react';
-import { Modal, View, Image } from 'react-native';
+import { Modal, View, Text, Image, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
 export default function InformationScreen({ contact, visible, onClose }) {
-    visible,
-    onClose,
-    onSave
-    return(
-        <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-        >
-            <View style={styles.modalBackground}>
-                <View style={styles.modalContainer}>
-                    {contact.photo && <Image source={{ uri: contact.photo }} style={styles.image} />}
-                <View style={styles.headerRow}>
-                    <TouchableOpacity onPress={onClose}>
-                        <Text style={styles.cancelButtonText}>Go Back</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.name}>{contact.name}</Text>
-                </View>
-                    <Text style={styles.phoneNumber}>{contact.phoneNumber}</Text>
-                </View>
+  // Return null if no contact is provided
+  if (!contact) return null;
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalBackground}>
+        <View style={styles.modalContainer}>
+          {/* Display contact image or placeholder */}
+          {contact.photo ? (
+            <Image source={{ uri: contact.photo }} style={styles.image} />
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={styles.placeholderText}>{contact.name.slice(0, 2).toUpperCase()}</Text>
             </View>
-        </Modal>
-    );
+          )}
+
+          {/* Contact Name */}
+          <Text style={styles.name}>{contact.name}</Text>
+
+          {/* Contact Phone Number */}
+          {contact.phoneNumber ? (
+            <Text style={styles.phoneNumber}>{contact.phoneNumber}</Text>
+          ) : (
+            <Text style={styles.noPhoneNumber}>Phone number not available</Text>
+          )}
+
+          {/* Close Button */}
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
 }
