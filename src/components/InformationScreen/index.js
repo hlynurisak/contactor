@@ -7,14 +7,15 @@ export default function InformationScreen({
     contact, 
     visible, 
     onClose,
-    setContacts  // Passed from App.js
+    setContact
 }) {
   // Return null if no contact is provided
     if (!contact) return null;
     const [editModalVisible, setEditModalVisible] = useState(false); // State for edit modal
 
     const handleSave = (updatedContact) => {
-        setContacts(updatedContact); // Use the passed prop to update contacts
+        setContact(updatedContact); // Use the passed prop to update contacts
+        onClose(); // Close the information modal
     };
 
     return (
@@ -65,7 +66,7 @@ export default function InformationScreen({
                 onSave={(updatedContact) => {
                     setEditModalVisible(false); // Close edit modal after saving
                     handleSave(updatedContact); // Save the updated contact locally
-                }}                
+                }}
             />
         </>
     );

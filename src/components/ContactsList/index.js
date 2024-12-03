@@ -1,38 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 import * as Linking from 'expo-linking';
 import { Ionicons } from '@expo/vector-icons';
 
 const ContactsList = ({ search, contacts, onContactSelect }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
-
-  useEffect(() => {
-    const sortedContacts = [...contacts].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-
-    if (search) {
-      const filtered = sortedContacts.filter((contact) =>
+  if (!contacts) return [];
+  // Filter and sort contacts
+  const filterContacts = (contacts, search) => {
+    return contacts
+      .filter((contact) =>
         contact.name.toLowerCase().includes(search.toLowerCase())
-      );
-      setFilteredContacts(filtered);
-    } else {
-      setFilteredContacts(sortedContacts);
-    }
+      )
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  // Update filteredContacts whenever search or contacts change
+  useEffect(() => {
+    setFilteredContacts(filterContacts(contacts, search));
   }, [search, contacts]);
 
   const renderContact = ({ item }) => (
     <View style={styles.contactContainer}>
       <TouchableOpacity
         style={styles.contact}
-        onPress={() => onContactSelect(item)} 
+        onPress={() => onContactSelect(item)}
       >
         <View style={styles.thumbnail}>
           {item.photo ? (
             <Image source={{ uri: item.photo }} style={styles.image} />
           ) : (
-            <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
+            <Text style={styles.initialsText}>
+              {item.name.slice(0, 2).toUpperCase()}
+            </Text>
           )}
         </View>
         <Text style={styles.contactName}>{item.name}</Text>
@@ -42,7 +43,6 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
       >
         <View style={styles.callButton}>
           <Ionicons name="call" size={24} color="#fff" />
-
         </View>
       </TouchableOpacity>
     </View>

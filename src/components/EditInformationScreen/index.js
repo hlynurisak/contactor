@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, View, Image, Text, TouchableOpacity, Button, TextInput } from 'react-native';
+import { Modal, View, Image, Text, TouchableOpacity, Button, TextInput, Alert } from 'react-native';
 import styles from './styles';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
@@ -40,41 +40,12 @@ export default function EditInformationScreen({
             setPhoto(result.assets[0].uri);
         }
     };
-
-    const saveToFileSystem = async (updatedContact) => {
-        try {
-            const fileName = `${contact.id}.json`; // Use the same ID to overwrite the file
-            const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-    
-            const fileContent = JSON.stringify(updatedContact);
-    
-            await FileSystem.writeAsStringAsync(fileUri, fileContent);
-            Alert.alert('Contact updated successfully!');
-        } catch (error) {
-            console.error('Error saving contact:', error);
-            Alert.alert('Error', 'Unable to save contact.');
-        }
-    };
     
     const handleSave = () => {
         if (!contactName || !phoneNumber) {
             alert('Name and Phone number are required');
             return;
         }
-    
-        const updatedContact = {
-            id: contact.id, // Keep the same ID for matching
-            name: contactName, // Ensure the structure matches the parent list
-            phoneNumber,
-            photo,
-        };
-    
-        
-        saveToFileSystem(updatedContact);
-    
-        
-        onSave(updatedContact);
-    
         
         setContactName('');
         setPhoneNumber('');

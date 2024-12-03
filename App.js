@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import ContactsList from './src/components/ContactsList';
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
 import InformationScreen from './src/components/InformationScreen';
-import * as FileSystem from 'expo-file-system';
+import { getContacts, saveNewContact, updateContact } from './src/services/fileService';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
@@ -16,58 +16,48 @@ export default function App() {
 
   // Load saved contacts from the file system on mount
   useEffect(() => {
-    const loadSavedContacts = async () => {
+    const fetchContacts = async () => {
       try {
-        const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
-        const jsonFiles = files.filter((file) => file.endsWith('.json'));
-        const loadedContacts = [];
-
-        for (const file of jsonFiles) {
-          const fileContent = await FileSystem.readAsStringAsync(
-            `${FileSystem.documentDirectory}${file}`
-          );
-          const contact = JSON.parse(fileContent);
-          loadedContacts.push({
-            id: file, 
-            name: contact.contactName,
-            phoneNumber: contact.phoneNumber,
-            photo: contact.photo,
-          });
-        }
-
-        setContacts(loadedContacts);
+        const loadedContacts = await getContacts();
+        setContacts(loadedContacts || []);
       } catch (error) {
-        console.error('Error loading contacts:', error);
+        console.error('Failed to load contacts:', error);
+        setContacts([]); // Ensure contacts is an array even on failure
       }
     };
-
-    loadSavedContacts();
+    fetchContacts();
   }, []);
 
-  const handleAddContact = (newContact) => {
-    setContacts((prevContacts) => [
-      ...prevContacts,
-      {
-        id: `${newContact.contactName}-${Date.now()}`, 
-        name: newContact.contactName,
-        phoneNumber: newContact.phoneNumber,
-        photo: newContact.photo,
-      },
-    ]);
+  // Function to handle adding a new contact
+  const handleAddContact = async (newContact) => {
+    const success = await saveNewContact(newContact);
+    if (!success) {
+      Alert.alert('Error', 'Unable to save contact.');
+      return;
+    }
+    setContacts((prevContacts) => [...prevContacts, newContact]);
+    setModalVisible(false);
   };
 
+  // Function to handle selecting a contact
   const handleContactSelect = (contact) => {
     setSelectedContact(contact); 
     setInfoModalVisible(true); 
   };
 
-  const handleSaveContact = (updatedContact) => {
+  // Function to handle updating a contact
+  const handleUpdateContact = async (updatedContact) => {
+    const success = await updateContact(updatedContact);
+    if (!success) {
+      Alert.alert('Error', 'Unable to save contact.');
+      return;
+    }
     setContacts((prevContacts) =>
       prevContacts.map((contact) =>
         contact.id === updatedContact.id ? updatedContact : contact
       )
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -105,7 +95,7 @@ export default function App() {
         contact={selectedContact}
         visible={infoModalVisible}
         onClose={() => setInfoModalVisible(false)} 
-        setContacts={handleSaveContact} // Pass down the save handler
+        setContact={handleUpdateContact}
       />
     </View>
   );

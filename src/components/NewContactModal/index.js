@@ -1,24 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Modal, Button, TouchableOpacity, Image, Alert } from 'react-native';
 import styles from './styles';
-import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 
 export default function NewContactModal({ visible, onClose, onSave }) {
-  const [contactName, setContactName] = React.useState('');
-  const [phoneNumber, setPhoneNumber] = React.useState('');
-  const [photo, setPhoto] = React.useState('');
+  const [contactName, setContactName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [photo, setPhoto] = useState('');
 
-  // Unique ID generator
-  const generateUniqueId = () => uuidv4();
-
+  // Function to handle image selection
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
-      alert('Permission to access the gallery is required!');
+      Alert.alert('Permission required', 'Permission to access the gallery is required!');
       return;
     }
 
@@ -34,39 +29,21 @@ export default function NewContactModal({ visible, onClose, onSave }) {
     }
   };
 
-  const saveToFileSystem = async (contact) => {
-    try {
-      const fileName = `${contact.contactName}-${generateUniqueId()}.json`; 
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-
-      const fileContent = JSON.stringify(contact);
-
-      await FileSystem.writeAsStringAsync(fileUri, fileContent);
-    } catch (error) {
-      console.error('Error saving contact:', error);
-      Alert.alert('Error', 'Unable to save contact.');
-    }
-  };
-
+  // Function to handle saving the new contact
   const handleSave = () => {
     if (!contactName || !phoneNumber) {
-      alert('Name and Phone number are required');
+      Alert.alert('Validation error', 'Name and Phone number are required');
       return;
     }
 
     const newContact = {
-      contactName,
+      name: contactName,
       phoneNumber,
       photo,
     };
 
-    
-    saveToFileSystem(newContact);
-
-    
     onSave(newContact);
 
-    
     setContactName('');
     setPhoneNumber('');
     setPhoto('');
