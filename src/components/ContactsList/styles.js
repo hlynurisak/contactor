@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
   },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
 });
 
 export default styles;

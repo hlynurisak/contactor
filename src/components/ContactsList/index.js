@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
 
 const ContactsList = ({ search, contacts, onContactSelect }) => {
@@ -26,7 +26,11 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
       onPress={() => onContactSelect(item)} 
     >
       <View style={styles.initialsCircle}>
-        <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
+        {item.photo ? (
+          <Image source={{ uri: item.photo }} style={styles.image} />
+        ) : (
+          <Text style={styles.initialsText}>{item.name.slice(0, 2).toUpperCase()}</Text>
+        )}
       </View>
       <Text style={styles.contactName}>{item.name}</Text>
     </TouchableOpacity>
