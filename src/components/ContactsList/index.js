@@ -40,7 +40,7 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
       <TouchableOpacity
         onPress={() => Linking.openURL(`tel:${item.phoneNumber}`)}
       >
-        <View style={styles.phoneIcon}>
+        <View style={styles.callButton}>
           <Ionicons name="call" size={24} color="#fff" />
 
         </View>

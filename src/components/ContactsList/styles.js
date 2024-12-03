@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
-  phoneIcon: {
+  callButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
