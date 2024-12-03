@@ -5,6 +5,7 @@ import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
 import InformationScreen from './src/components/InformationScreen';
 import * as FileSystem from 'expo-file-system';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
   const [search, setSearch] = useState('');
@@ -79,7 +80,9 @@ export default function App() {
           style={styles.addContact}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.addContactText}>+</Text>
+          <View style={styles.addContactIcon}>
+            <Ionicons name="add" size={24} color="#fff" />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -133,10 +136,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
+    marginRight: 7,
   },
-  addContactText: {
+  addContactIcon: {
+    width: 40,
+    height: 40,
     color: '#fff',
-    fontSize: 25,
-    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
