@@ -1,3 +1,4 @@
+// EditInformationScreen.js
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Image, Text, TouchableOpacity, Button, TextInput, Alert } from 'react-native';
 import styles from './styles';
@@ -22,14 +23,33 @@ export default function EditInformationScreen({
   }, [contact]);
 
   const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
+    const libraryPermissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!libraryPermissionResult.granted) {
       Alert.alert('Permission required', 'Permission to access the gallery is required!');
       return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setPhoto(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    const cameraPermissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (!cameraPermissionResult.granted) {
+      Alert.alert('Permission required', 'Permission to access the camera is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -92,6 +112,12 @@ export default function EditInformationScreen({
             onPress={pickImage}
           >
             <Text style={styles.imagePickerButtonText}>Pick an Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.imagePickerButton}
+            onPress={takePhoto}
+          >
+            <Text style={styles.imagePickerButtonText}>Take a Photo</Text>
           </TouchableOpacity>
           {photo ? (
             <Image source={{ uri: photo }} style={styles.imagePreview} />
