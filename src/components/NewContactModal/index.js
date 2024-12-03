@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TextInput, Modal, Button, TouchableOpacity, Image, Alert } from 'react-native';
 import styles from './styles';
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
@@ -10,7 +12,7 @@ export default function NewContactModal({ visible, onClose, onSave }) {
   const [photo, setPhoto] = React.useState('');
 
   // Unique ID generator
-  const generateUniqueId = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const generateUniqueId = () => uuidv4();
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
