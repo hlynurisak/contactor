@@ -1,5 +1,6 @@
+// App.js
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
 import ContactsList from './src/components/ContactsList';
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
@@ -14,7 +15,6 @@ export default function App() {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
 
-  // Load saved contacts from the file system on mount
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -22,13 +22,12 @@ export default function App() {
         setContacts(loadedContacts || []);
       } catch (error) {
         console.error('Failed to load contacts:', error);
-        setContacts([]); // Ensure contacts is an array even on failure
+        setContacts([]);
       }
     };
     fetchContacts();
   }, []);
 
-  // Function to handle adding a new contact
   const handleAddContact = async (newContact) => {
     const success = await saveNewContact(newContact);
     if (!success) {
@@ -39,13 +38,11 @@ export default function App() {
     setModalVisible(false);
   };
 
-  // Function to handle selecting a contact
   const handleContactSelect = (contact) => {
-    setSelectedContact(contact); 
-    setInfoModalVisible(true); 
+    setSelectedContact(contact);
+    setInfoModalVisible(true);
   };
 
-  // Function to handle updating a contact
   const handleUpdateContact = async (updatedContact) => {
     const success = await updateContact(updatedContact);
     if (!success) {
@@ -57,15 +54,13 @@ export default function App() {
         contact.id === updatedContact.id ? updatedContact : contact
       )
     );
+    setSelectedContact(updatedContact);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* Search bar */}
         <SearchBar search={search} setSearch={setSearch} style={styles.searchBar} />
-
-        {/* Add contact button */}
         <TouchableOpacity
           style={styles.addContact}
           onPress={() => setModalVisible(true)}
@@ -75,26 +70,23 @@ export default function App() {
           </View>
         </TouchableOpacity>
       </View>
-
-      {/* List of contacts */}
       <ContactsList
         search={search}
         contacts={contacts}
-        onContactSelect={handleContactSelect} 
+        onContactSelect={handleContactSelect}
       />
-
-      {/* Modal for adding a new contact */}
       <NewContactModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)} 
-        onSave={handleAddContact} 
+        onClose={() => setModalVisible(false)}
+        onSave={handleAddContact}
       />
-
-      {/* Modal for displaying detailed contact information */}
       <InformationScreen
         contact={selectedContact}
         visible={infoModalVisible}
-        onClose={() => setInfoModalVisible(false)} 
+        onClose={() => {
+          setInfoModalVisible(false);
+          setSelectedContact(null);
+        }}
         setContact={handleUpdateContact}
       />
     </View>

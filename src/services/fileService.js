@@ -2,13 +2,11 @@ import * as FileSystem from 'expo-file-system';
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from 'uuid';
 
-// Function to sanitize contact name for file naming
 const sanitizeName = (name) => {
   const sanitizedName = name.replace(/[^a-z0-9]/gi, "_");
   return sanitizedName.toLowerCase();
 };
 
-// Function to get the filename of a contact by its ID
 const getContactFileById = async (contactId) => {
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
@@ -21,7 +19,6 @@ const getContactFileById = async (contactId) => {
   }
 };
 
-// Function to load all contacts from the file system
 export const getContacts = async () => {
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
@@ -47,7 +44,6 @@ export const getContacts = async () => {
   }
 };
 
-// Function to save a new contact to the file system
 export const saveNewContact = async (newContact) => {
   try {
     if (!newContact.name || !newContact.phoneNumber) {
@@ -71,21 +67,21 @@ export const saveNewContact = async (newContact) => {
   }
 };
 
-// Function to update an existing contact in the file system
 export const updateContact = async (updatedContact) => {
   try {
-    const thisId = updatedContact.id;
-    if (!thisId) {
+    const contactId = updatedContact.id;
+    if (!contactId) {
       console.error('Contact ID not found');
       return false;
     }
-    const contactFile = await getContactFileById(thisId);
+    const contactFile = await getContactFileById(contactId);
     if (!contactFile) {
       console.error('Contact file not found');
       return false;
     }
     const fileUri = `${FileSystem.documentDirectory}${contactFile}`;
     const fileContent = JSON.stringify(updatedContact);
+
     await FileSystem.writeAsStringAsync(fileUri, fileContent);
     return true;
   } catch (error) {
