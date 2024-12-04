@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system';
+import * as Contacts from 'expo-contacts';
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,28 +21,30 @@ const getContactFileById = async (contactId) => {
 };
 
 export const getContacts = async () => {
-  try {
+    importContacts();
+    
+    try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
     const loadedContacts = [];
 
     for (const file of jsonFiles) {
-      const fileContent = await FileSystem.readAsStringAsync(
-        `${FileSystem.documentDirectory}${file}`
-      );
-      const contact = JSON.parse(fileContent);
-      loadedContacts.push({
-        id: contact.id,
-        name: contact.name,
-        phoneNumber: contact.phoneNumber,
-        photo: contact.photo,
-      });
+        const fileContent = await FileSystem.readAsStringAsync(
+            `${FileSystem.documentDirectory}${file}`
+        );
+        const contact = JSON.parse(fileContent);
+        loadedContacts.push({
+            id: contact.id,
+            name: contact.name,
+            phoneNumber: contact.phoneNumber,
+            photo: contact.photo,
+        });
     }
-    return loadedContacts;
-  } catch (error) {
-    console.error('Error loading contacts:', error);
-    return [];
-  }
+        return loadedContacts; 
+    } catch (error) {
+        console.error('Error loading contacts:', error);
+        return [];
+    }
 };
 
 export const saveNewContact = async (newContact) => {
@@ -115,3 +118,30 @@ export const updateContact = async (updatedContact) => {
     return false;
   }
 };
+
+const importContacts = async (contacts) => {
+    // Get permission to access contacts
+    const { status } = await Contacts.requestPermissionsAsync();
+    if (status !== 'granted') {
+      console.error('Permission to access contacts was denied');
+      return false;
+    }
+    const { data } = await Contacts.getContactsAsync({
+      fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
+    });
+    if (data.length > 0) {
+      for (const contact of data) {
+        if (!contact.name || !contact.phoneNumbers || contact.phoneNumbers.length === 0) {
+          continue;
+        }
+        const newContact = {
+          name: contact.name,
+          phoneNumber: contact.phoneNumbers[0]?.number || '',
+          photo: '',
+        };
+        await saveNewContact(newContact);
+      }
+      return true;
+    }
+    return false;
+}
