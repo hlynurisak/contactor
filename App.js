@@ -19,7 +19,7 @@ export default function App() {
     importFlag = true;
     const fetchContacts = async () => {
       try {
-        const loadedContacts = await getContacts(importFlaggi);
+        const loadedContacts = await getContacts(importFlag);
         setContacts(loadedContacts || []);
       } catch (error) {
         console.error('Failed to load contacts:', error);
