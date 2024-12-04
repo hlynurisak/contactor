@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
+    editContact: {
+        position: 'absolute',
+        top: 15,
+        right: 15,
+    }
 });
 
 export default styles;
