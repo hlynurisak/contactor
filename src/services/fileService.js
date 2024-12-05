@@ -20,11 +20,8 @@ const getContactFileById = async (contactId) => {
   }
 };
 
-export const getContacts = async (importFlag) => {
-  if (importFlag) {
-    console.log('Importing contacts');
-    await importContacts();
-  }
+export const getContacts = async () => {
+  await importContacts();
 
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
@@ -41,7 +38,6 @@ export const getContacts = async (importFlag) => {
         name: contact.name,
         phoneNumber: contact.phoneNumber,
         photo: contact.photo,
-        imported: contact.imported, // Include the imported attribute
       });
     }
     return loadedContacts;
@@ -59,10 +55,15 @@ export const saveNewContact = async (newContact) => {
     }
 
     const sanitizedName = sanitizeName(newContact.name);
-    const contactId = uuidv4();
-    newContact.id = contactId;
+    if (!newContact.id) {
+      const contactId = uuidv4();
+      newContact.id = contactId;
+    }
 
-    const fileName = `${sanitizedName}-${contactId}.json`;
+    // Flush contact if it already exists
+    await deleteContact(newContact.id);
+
+    const fileName = `${sanitizedName}-${newContact.id}.json`;
     const fileUri = `${FileSystem.documentDirectory}${fileName}`;
     const fileContent = JSON.stringify(newContact);
 
@@ -78,7 +79,6 @@ export const deleteContact = async (contactId) => {
   try {
     const contactFile = await getContactFileById(contactId);
     if (!contactFile) {
-      console.error('Contact file not found');
       return false;
     }
     const fileUri = `${FileSystem.documentDirectory}${contactFile}`;
@@ -131,31 +131,21 @@ const importContacts = async () => {
     return false;
   }
 
-  // Get existing contacts to delete imported ones
-  const contacts = await getContacts(false); // Correctly await the async function
-  if (contacts.length > 0) {
-    for (const contact of contacts) {
-      if (contact.imported) {
-        await deleteContact(contact.id); // Await the delete operation
-      }
-    }
-  }
-
-  // Now import contacts from device
+  // Import contacts from device
   const { data } = await Contacts.getContactsAsync({
     fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
   });
 
   if (data.length > 0) {
     for (const contact of data) {
-      if (!contact.name || !contact.phoneNumbers || contact.phoneNumbers.length === 0) {
+      if (!contact.name || !contact.phoneNumbers) {
         continue;
       }
       const newContact = {
         name: contact.name,
-        phoneNumber: contact.phoneNumbers[0]?.number || '',
+        phoneNumber: contact.phoneNumbers[0]?.number,
         photo: '',
-        imported: true,
+        id: contact.id,
       };
       await saveNewContact(newContact);
     }

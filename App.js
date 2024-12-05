@@ -16,13 +16,12 @@ export default function App() {
   const [selectedContact, setSelectedContact] = useState(null);
 
   useEffect(() => {
-    importFlag = true;
     const fetchContacts = async () => {
       try {
-        const loadedContacts = await getContacts(importFlag);
+        const loadedContacts = await getContacts();
         setContacts(loadedContacts || []);
       } catch (error) {
-        console.error('Failed to load contacts:', error);
+        console.log('Failed to load contacts:', error);
         setContacts([]);
       }
     };
