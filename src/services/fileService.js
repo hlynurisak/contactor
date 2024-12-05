@@ -133,7 +133,7 @@ const importContacts = async () => {
 
   // Import contacts from device
   const { data } = await Contacts.getContactsAsync({
-    fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
+    fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers, Contacts.Fields.Image],
   });
 
   if (data.length > 0) {
@@ -141,10 +141,13 @@ const importContacts = async () => {
       if (!contact.name || !contact.phoneNumbers) {
         continue;
       }
+      if (contact.name === "Þröstur Frændi") {
+        console.log(contact)
+      }
       const newContact = {
         name: contact.name,
         phoneNumber: contact.phoneNumbers[0]?.number,
-        photo: '',
+        photo: contact.imageAvailable ? contact.image.uri : '',
         id: contact.id,
       };
       await saveNewContact(newContact);
