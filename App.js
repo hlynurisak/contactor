@@ -1,11 +1,10 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
 import ContactsList from './src/components/ContactsList';
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
 import InformationScreen from './src/components/InformationScreen';
-import { getContacts, saveNewContact, updateContact } from './src/services/fileService';
+import { getContacts, importContacts, saveNewContact, updateContact } from './src/services/fileService';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
@@ -18,10 +17,11 @@ export default function App() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
+        await importContacts();
         const loadedContacts = await getContacts();
         setContacts(loadedContacts || []);
       } catch (error) {
-        console.log('Failed to load contacts:', error);
+        console.error('Failed to load contacts:', error);
         setContacts([]);
       }
     };
@@ -44,17 +44,19 @@ export default function App() {
   };
 
   const handleUpdateContact = async (updatedContact) => {
-    const success = await updateContact(updatedContact);
-    if (!success) {
+    const finalContact = await updateContact(updatedContact);
+    if (!finalContact) {
       Alert.alert('Error', 'Unable to save contact.');
       return;
     }
+  
+    // Use the returned finalContact (with the new id) to update state
     setContacts((prevContacts) =>
       prevContacts.map((contact) =>
-        contact.id === updatedContact.id ? updatedContact : contact
+        contact.id === updatedContact.id ? finalContact : contact
       )
     );
-    setSelectedContact(updatedContact);
+    setSelectedContact(finalContact);
   };
 
   return (

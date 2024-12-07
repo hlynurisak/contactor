@@ -13,6 +13,10 @@ const getContactFileById = async (contactId) => {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
     const file = jsonFiles.find((file) => file.includes(contactId));
+    
+    if (!file) {
+      return null;
+    }
     return file;
   } catch (error) {
     console.error('Error finding contact file:', error);
@@ -21,8 +25,6 @@ const getContactFileById = async (contactId) => {
 };
 
 export const getContacts = async () => {
-  await importContacts();
-
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
@@ -98,32 +100,34 @@ export const updateContact = async (updatedContact) => {
       return false;
     }
 
-    // Remove the ID from the updated contact
+    // Extract fields without id (to force a new id if needed)
     const { id, ...contactWithoutId } = updatedContact;
-    const contact = contactWithoutId;
+    const contact = { ...contactWithoutId };
 
-    // Delete the old contact
+    // Delete the old contact file
     const deleteResult = await deleteContact(contactId);
     if (!deleteResult) {
       console.error('Failed to delete old contact');
       return false;
     }
 
-    // Save the new contact
+    // Save the updated contact (this may create a new id if none provided)
     const saveResult = await saveNewContact(contact);
     if (!saveResult) {
       console.error('Failed to save updated contact');
       return false;
     }
 
-    return true;
+    // At this point, `contact.id` should have a valid ID (either retained or newly generated).
+    
+    return contact; // Return the updated contact with its new ID
   } catch (error) {
     console.error('Error updating contact:', error);
     return false;
   }
 };
 
-const importContacts = async () => {
+export const importContacts = async () => {
   // Get permission to access contacts
   const { status } = await Contacts.requestPermissionsAsync();
   if (status !== 'granted') {
@@ -140,9 +144,6 @@ const importContacts = async () => {
     for (const contact of data) {
       if (!contact.name || !contact.phoneNumbers) {
         continue;
-      }
-      if (contact.name === "Þröstur Frændi") {
-        console.log(contact)
       }
       const newContact = {
         name: contact.name,
