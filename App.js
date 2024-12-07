@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import ContactsList from './src/components/ContactsList';
 import SearchBar from './src/components/SearchBar';
 import NewContactModal from './src/components/NewContactModal';
 import InformationScreen from './src/components/InformationScreen';
 import { getContacts, importContacts, saveNewContact, updateContact } from './src/services/fileService';
 import { Ionicons } from '@expo/vector-icons';
+import styles from './styles';
 
 export default function App() {
   const [search, setSearch] = useState('');
@@ -94,39 +95,3 @@ export default function App() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 50,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1.5,
-    padding: 5,
-    paddingBottom: 10,
-    borderBottomColor: '#ccc',
-  },
-  searchBar: {
-    flex: 1,
-  },
-  addContact: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#007AFF',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    marginRight: 7,
-  },
-  addContactIcon: {
-    width: 40,
-    height: 40,
-    color: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
