@@ -3,27 +3,27 @@ import * as Contacts from 'expo-contacts';
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from 'uuid';
 
+// Utility function to sanitize contact names for filenames
 const sanitizeName = (name) => {
   const sanitizedName = name.replace(/[^a-z0-9]/gi, "_");
   return sanitizedName.toLowerCase();
 };
 
+// Retrieve the filename of a contact by its ID
 const getContactFileById = async (contactId) => {
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
     const file = jsonFiles.find((file) => file.includes(contactId));
-    
-    if (!file) {
-      return null;
-    }
-    return file;
+
+    return file || null;
   } catch (error) {
     console.error('Error finding contact file:', error);
     return null;
   }
 };
 
+// Load all contacts from the file system
 export const getContacts = async () => {
   try {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
@@ -49,6 +49,7 @@ export const getContacts = async () => {
   }
 };
 
+// Save a new contact to the file system
 export const saveNewContact = async (newContact) => {
   try {
     if (!newContact.name || !newContact.phoneNumber) {
@@ -58,11 +59,10 @@ export const saveNewContact = async (newContact) => {
 
     const sanitizedName = sanitizeName(newContact.name);
     if (!newContact.id) {
-      const contactId = uuidv4();
-      newContact.id = contactId;
+      newContact.id = uuidv4();
     }
 
-    // Flush contact if it already exists
+    // Remove existing contact file if it exists
     await deleteContact(newContact.id);
 
     const fileName = `${sanitizedName}-${newContact.id}.json`;
@@ -77,6 +77,7 @@ export const saveNewContact = async (newContact) => {
   }
 };
 
+// Delete a contact file by its ID
 export const deleteContact = async (contactId) => {
   try {
     const contactFile = await getContactFileById(contactId);
@@ -92,6 +93,7 @@ export const deleteContact = async (contactId) => {
   }
 };
 
+// Update an existing contact's information
 export const updateContact = async (updatedContact) => {
   try {
     const contactId = updatedContact.id;
@@ -100,42 +102,38 @@ export const updateContact = async (updatedContact) => {
       return false;
     }
 
-    // Extract fields without id (to force a new id if needed)
     const { id, ...contactWithoutId } = updatedContact;
     const contact = { ...contactWithoutId };
 
-    // Delete the old contact file
+    // Remove the old contact file
     const deleteResult = await deleteContact(contactId);
     if (!deleteResult) {
       console.error('Failed to delete old contact');
       return false;
     }
 
-    // Save the updated contact (this may create a new id if none provided)
+    // Save the updated contact
     const saveResult = await saveNewContact(contact);
     if (!saveResult) {
       console.error('Failed to save updated contact');
       return false;
     }
 
-    // At this point, `contact.id` should have a valid ID (either retained or newly generated).
-    
-    return contact; // Return the updated contact with its new ID
+    return contact;
   } catch (error) {
     console.error('Error updating contact:', error);
     return false;
   }
 };
 
+// Import contacts from the device's contact list
 export const importContacts = async () => {
-  // Get permission to access contacts
   const { status } = await Contacts.requestPermissionsAsync();
   if (status !== 'granted') {
     console.error('Permission to access contacts was denied');
     return false;
   }
 
-  // Import contacts from device
   const { data } = await Contacts.getContactsAsync({
     fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers, Contacts.Fields.Image],
   });

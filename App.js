@@ -8,13 +8,16 @@ import { getContacts, importContacts, saveNewContact, updateContact } from './sr
 import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 
+// Main application component managing contacts
 export default function App() {
+  // State variables for search, modals, contacts, and selected contact
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
 
+  // Fetch contacts on component mount
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -29,6 +32,7 @@ export default function App() {
     fetchContacts();
   }, []);
 
+  // Add a new contact and update state
   const handleAddContact = async (newContact) => {
     const success = await saveNewContact(newContact);
     if (!success) {
@@ -39,19 +43,21 @@ export default function App() {
     setModalVisible(false);
   };
 
+  // Select a contact and show information modal
   const handleContactSelect = (contact) => {
     setSelectedContact(contact);
     setInfoModalVisible(true);
   };
 
+  // Update an existing contact and refresh state
   const handleUpdateContact = async (updatedContact) => {
     const finalContact = await updateContact(updatedContact);
     if (!finalContact) {
       Alert.alert('Error', 'Unable to save contact.');
       return;
     }
-  
-    // Use the returned finalContact (with the new id) to update state
+
+    // Update contacts list with the updated contact
     setContacts((prevContacts) =>
       prevContacts.map((contact) =>
         contact.id === updatedContact.id ? finalContact : contact
@@ -62,6 +68,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      {/* Header with search bar and add contact button */}
       <View style={styles.header}>
         <SearchBar search={search} setSearch={setSearch} style={styles.searchBar} />
         <TouchableOpacity
@@ -73,16 +80,22 @@ export default function App() {
           </View>
         </TouchableOpacity>
       </View>
+
+      {/* List of contacts filtered by search */}
       <ContactsList
         search={search}
         contacts={contacts}
         onContactSelect={handleContactSelect}
       />
+
+      {/* Modal for adding a new contact */}
       <NewContactModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSave={handleAddContact}
       />
+
+      {/* Modal for displaying and editing contact information */}
       <InformationScreen
         contact={selectedContact}
         visible={infoModalVisible}

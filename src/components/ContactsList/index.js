@@ -4,10 +4,11 @@ import styles from './styles';
 import * as Linking from 'expo-linking';
 import { Ionicons } from '@expo/vector-icons';
 
+// Component to display and manage the list of contacts
 const ContactsList = ({ search, contacts, onContactSelect }) => {
   const [filteredContacts, setFilteredContacts] = useState([]);
-  if (!contacts) return [];
-  // Filter and sort contacts
+
+  // Function to filter and sort contacts based on the search query
   const filterContacts = (contacts, search) => {
     return contacts
       .filter((contact) =>
@@ -16,11 +17,14 @@ const ContactsList = ({ search, contacts, onContactSelect }) => {
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  // Update filteredContacts whenever search or contacts change
+  // Update the filtered contacts when search input or contacts change
   useEffect(() => {
-    setFilteredContacts(filterContacts(contacts, search));
+    if (contacts) {
+      setFilteredContacts(filterContacts(contacts, search));
+    }
   }, [search, contacts]);
 
+  // Render each contact item in the list
   const renderContact = ({ item }) => (
     <View style={styles.contactContainer}>
       <TouchableOpacity
